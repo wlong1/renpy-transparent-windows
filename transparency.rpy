@@ -65,6 +65,11 @@ else:
 # In order to have it overlay instead of replace, the common files must be edited.
 # The following goes into a file your RenPy folder, NOT project folder.
 # Look for the file \renpy\common\00gamemenu.rpy
+
+# In def _enter_menu():
+
+store._window = True  # Flip this from false to true
+
 # Modify the _game_menu label
 
 label _game_menu(*args, _game_menu_screen=_game_menu_screen, **kwargs):
@@ -73,13 +78,14 @@ label _game_menu(*args, _game_menu_screen=_game_menu_screen, **kwargs):
 
     $ renpy.play(config.enter_sound)
 
+    call _enter_game_menu from _call__enter_game_menu_0
+
     if renpy.has_label("game_menu"):
         jump expression "game_menu"
 
     if renpy.has_screen(_game_menu_screen):
-        $ renpy.transition(config.intra_transition)
-        $ renpy.show_screen(_game_menu_screen, *args, _layer="screens", _zorder=200, **kwargs) # Show on same layer but higher zorder
-        $ renpy.pause(hard=True)
+        $ renpy.show_screen(_game_menu_screen, *args, _layer="screens", _zorder=200, **kwargs)
+        $ ui.interact()
         jump _noisy_return
 
     jump expression _game_menu_screen
@@ -88,13 +94,14 @@ label _game_menu(*args, _game_menu_screen=_game_menu_screen, **kwargs):
 # Because the game_menu keybind is processed differently than quick menu buttons, you need to also patch up that part of the code.
 
 def _invoke_game_menu():
-    if renpy.context()._menu:
-        if main_menu:
-            return
+
+        if renpy.context()._menu:
+            if main_menu:
+                return
+            else:
+                renpy.jump("_noisy_return")
         else:
-            renpy.jump("_noisy_return")
-    else:
-        if config.game_menu_action:
-            renpy.display.behavior.run(config.game_menu_action)
-        else:
-            renpy.call_in_new_context('_game_menu', _game_menu_screen="save")  # Update this line
+            if config.game_menu_action:
+                renpy.display.behavior.run(config.game_menu_action)
+            else:
+                renpy.call_in_new_context('_game_menu', _game_menu_screen='save')  # Update this line
