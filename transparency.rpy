@@ -48,6 +48,7 @@ textbutton _("Return"):
 
     action [Return(), style.rebuild]
 
+key "game_menu" action [Return(), style.rebuild] # Add this to make sure right clicks are handled properly
 
 
 ## The following is for having an overlay menu and making it translucent also
@@ -76,8 +77,24 @@ label _game_menu(*args, _game_menu_screen=_game_menu_screen, **kwargs):
         jump expression "game_menu"
 
     if renpy.has_screen(_game_menu_screen):
+        $ renpy.transition(config.intra_transition)
         $ renpy.show_screen(_game_menu_screen, *args, _layer="screens", _zorder=200, **kwargs) # Show on same layer but higher zorder
         $ renpy.pause(hard=True)
         jump _noisy_return
 
     jump expression _game_menu_screen
+
+
+# Because the game_menu keybind is processed differently than quick menu buttons, you need to also patch up that part of the code.
+
+def _invoke_game_menu():
+    if renpy.context()._menu:
+        if main_menu:
+            return
+        else:
+            renpy.jump("_noisy_return")
+    else:
+        if config.game_menu_action:
+            renpy.display.behavior.run(config.game_menu_action)
+        else:
+            renpy.call_in_new_context('_game_menu', _game_menu_screen="save")  # Update this line
