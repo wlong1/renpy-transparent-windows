@@ -42,9 +42,18 @@ style nvl_window:
     padding gui.nvl_borders.padding
 
 
+# Need to forcibly rebuild the textbox style when exiting the menu
+# CTRL + F: screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
+# At the bottom, update action
 
-# The following is for having an overlay menu and making it translucent also
+textbutton _("Return"):
+    style "return_button"
 
+    action [Return(), style.rebuild]
+
+
+
+## The following is for having an overlay menu and making it translucent also
 
 # CTRL + F: screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
 # and modify gui.main_menu_background so the background now has variable transparency
