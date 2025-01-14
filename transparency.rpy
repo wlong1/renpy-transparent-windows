@@ -17,9 +17,6 @@ init python:
 
 # In screens.py
 
-define persistent.window_opacity = 0.8
-
-
 # CTRL + F: screen preferences()
 # and add this slider somewhere inside your preference window
 
