@@ -50,6 +50,8 @@ textbutton _("Return"):
 
 key "game_menu" action [Return(), style.rebuild] # Add this to make sure right clicks are handled properly
 
+#########################
+#########################
 
 ## The following is for having an overlay menu and making it translucent also
 
@@ -68,7 +70,8 @@ else:
 
 # In def _enter_menu():
 
-store._window = True  # Flip this from false to true
+if main_menu:  # Add a condition above store._window to fix main menu overlay
+    store._window = False
 
 # Modify the _game_menu label
 
